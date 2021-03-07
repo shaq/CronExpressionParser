@@ -1,0 +1,56 @@
+package sh.momoh;
+
+import sh.momoh.expression.CronField;
+import sh.momoh.expression.CronFieldType;
+import sh.momoh.expression.IllegalCronExpressionException;
+import sh.momoh.parsers.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class CronParser {
+
+    public static void main(String[] args) {
+        if (args.length < 1) throw new IllegalArgumentException("No cron expression supplied.");
+        List<String> progArgs = List.of(args[0].split("\\s"));
+        if (progArgs.size() < 6) throw new IllegalCronExpressionException("CronParser requires at least 6 arguments.");
+        List<String> cronExpression = progArgs.subList(0, 5);
+        List<String> cronCommand = progArgs.subList(5, progArgs.size());
+        printOutputTable(cronExpression, cronCommand);
+    }
+
+    private static List<CronOutput<Integer>> parseCronFields(List<CronField> cronFields) {
+        List<CronOutput<Integer>> cronOutput = new ArrayList<>();
+        for (CronField cronField : cronFields) {
+            List<Integer> times = new ArrayList<>();
+            String fieldName = cronField.getFieldName();
+            CronFieldType type = cronField.getCronType();
+            switch (type) {
+                case STAR -> times = StarParser.parse(fieldName);
+                case SINGLE -> times = SingleParser.parse(fieldName, cronField);
+                case RANGE -> times = RangeParser.parse(fieldName, cronField);
+                case INTERVAL -> times = IntervalParser.parse(fieldName, cronField);
+                case LIST -> times = ListParser.parse(fieldName, cronField);
+            }
+            cronOutput.add(new CronOutput<>(fieldName, times));
+        }
+        return cronOutput;
+    }
+
+    private static List<CronField> parseCronExpression(List<String> cronExpression) {
+        return IntStream
+                .range(0, cronExpression.size())
+                .mapToObj(index -> CronFieldType.from(cronExpression.get(index), CronField.NAMES.get(index)))
+                .collect(Collectors.toList());
+    }
+
+    private static void printOutputTable(List<String> cronExpression, List<String> cronCommand) {
+        List<CronField> cronFields = parseCronExpression(cronExpression);
+        List<CronOutput<Integer>> table = parseCronFields(cronFields);
+        table.forEach(System.out::println);
+        System.out.println(new CronOutput<>("command", cronCommand));
+    }
+
+}
