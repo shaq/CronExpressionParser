@@ -7,9 +7,9 @@ public enum CronFieldType {
 
     STAR("^\\*$"),
     SINGLE("^\\w{1,4}$"),
-    RANGE("^\\w{1,3}-\\w{1,3}$"),
-    INTERVAL("^(\\w{1,3}-\\w{1,3}|\\*)/(2|3|4|5|6|12|15|20|30)$"),
-    LIST("^\\w{1,3}(,\\w{1,3})+$");
+    RANGE("^\\w{1,4}-\\w{1,4}$"),
+    INTERVAL("^(\\w{1,4}-\\w{1,4}|\\*)/(\\d+)$"),
+    LIST("^\\w{1,4}(,\\w{1,4})+$");
 
     private final Pattern regex;
 
@@ -30,7 +30,8 @@ public enum CronFieldType {
         return Arrays.stream(values())
                 .filter(type -> type.matches(value))
                 .findFirst()
-                .get();
+                .orElseThrow(() -> new IllegalCronExpressionException("The argument \"" + value + "\" doesn't match any" +
+                        " valid cron format."));
     }
 
     private boolean matches(String text) {

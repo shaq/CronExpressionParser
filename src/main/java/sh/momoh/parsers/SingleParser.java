@@ -12,9 +12,10 @@ import static sh.momoh.expression.timeunit.DayOfWeek.getDayNumber;
 import static sh.momoh.expression.timeunit.Month.getMonthNumber;
 import static sh.momoh.expression.timeunit.TimeBounds.isWithinBounds;
 
-public class SingleParser {
+public class SingleParser implements ICronFieldParser {
 
-    public static List<Integer> parse(String fieldName, CronField cronField) {
+    public List<Integer> parse(CronField cronField) {
+        String fieldName = cronField.getFieldName();
         String value = cronField.getFieldValue();
         switch (fieldName) {
             case "month" -> {

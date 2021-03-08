@@ -6,22 +6,20 @@ import sh.momoh.expression.CronFieldType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IntervalParser {
+public class IntervalParser implements ICronFieldParser {
 
-    public static List<Integer> parse(String fieldName, CronField cronField) {
+    public List<Integer> parse(CronField cronField) {
+        String fieldName = cronField.getFieldName();
         String value = cronField.getFieldValue();
         List<String> valuesList = List.of(value.split("/"));
         String frequency = valuesList.get(0), divisor = valuesList.get(1);
 
-        CronFieldType type = CronFieldType.from(frequency);
-        List<Integer> frequencyList = null;
-        switch (type) {
-            case STAR -> frequencyList = StarParser.parse(fieldName);
-            case RANGE -> frequencyList = RangeParser.parse(fieldName, new CronField(fieldName, frequency));
-        }
+        CronFieldType freqType = CronFieldType.from(frequency);
+        ICronFieldParser parser = ParserFactory.getParser(freqType);
+        List<Integer> frequencyList = parser.parse(new CronField(fieldName, frequency));
+        if (frequencyList == null) throw new AssertionError();
 
         List<Integer> filtered = new ArrayList<>();
-        if (frequencyList == null) throw new AssertionError();
         int start = frequencyList.get(0), end = frequencyList.get(frequencyList.size() - 1);
         for (int i = start; i < end; i += Integer.parseInt(divisor)) {
             filtered.add(i);

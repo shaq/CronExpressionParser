@@ -14,13 +14,14 @@ import static org.hamcrest.Matchers.is;
 
 public class ListParserTest {
 
-    private CronField cronField;
+    private final CronField cronField = new CronField();
+    private ICronFieldParser listParser;
 
     @Before
     public void setUp() {
-        cronField = new CronField();
         CronFieldType fieldType = CronFieldType.LIST;
         cronField.setCronType(fieldType);
+        listParser = ParserFactory.getParser(fieldType);
     }
 
     @Test
@@ -28,7 +29,7 @@ public class ListParserTest {
         String minutes = "minutes";
         cronField.setFieldName(minutes);
         cronField.setFieldValue("0,1,2,3");
-        List<Integer> actual = ListParser.parse(minutes, cronField);
+        List<Integer> actual =  listParser.parse(cronField);
         List<Integer> expected = List.of(0, 1, 2, 3);
         assertThat(actual, is(equalTo(expected)));
     }
@@ -38,7 +39,7 @@ public class ListParserTest {
         String minutes = "minutes";
         cronField.setFieldName(minutes);
         cronField.setFieldValue("61,1,2,100");
-        List<Integer> actual = ListParser.parse(minutes, cronField);
+        List<Integer> actual =  listParser.parse(cronField);
     }
 
     @Test
@@ -46,7 +47,7 @@ public class ListParserTest {
         String hours = "hours";
         cronField.setFieldName(hours);
         cronField.setFieldValue("0,12,23");
-        List<Integer> actual = ListParser.parse(hours, cronField);
+        List<Integer> actual =  listParser.parse(cronField);
         List<Integer> expected = List.of(0, 12, 23);
         assertThat(actual, is(equalTo(expected)));
     }
@@ -56,7 +57,7 @@ public class ListParserTest {
         String hours = "hours";
         cronField.setFieldName(hours);
         cronField.setFieldValue("24,30");
-        List<Integer> actual = ListParser.parse(hours, cronField);
+        List<Integer> actual =  listParser.parse(cronField);
     }
 
     @Test
@@ -64,8 +65,8 @@ public class ListParserTest {
         String day = "day of month";
         cronField.setFieldName(day);
         cronField.setFieldValue("1,15,2,31");
-        List<Integer> actual = ListParser.parse(day, cronField);
-        List<Integer> expected = List.of(1, 15, 2, 31);
+        List<Integer> actual =  listParser.parse(cronField);
+        List<Integer> expected = List.of(1, 2, 15, 31);
         assertThat(actual, is(equalTo(expected)));
     }
 
@@ -74,7 +75,7 @@ public class ListParserTest {
         String day = "day of month";
         cronField.setFieldName(day);
         cronField.setFieldValue("32,1,2,0");
-        List<Integer> actual = ListParser.parse(day, cronField);
+        List<Integer> actual =  listParser.parse(cronField);
     }
 
     @Test
@@ -82,7 +83,7 @@ public class ListParserTest {
         String month = "month";
         cronField.setFieldName(month);
         cronField.setFieldValue("1,2,3");
-        List<Integer> actual = ListParser.parse(month, cronField);
+        List<Integer> actual =  listParser.parse(cronField);
         List<Integer> expected = List.of(1, 2, 3);
         assertThat(actual, is(equalTo(expected)));
     }
@@ -92,7 +93,7 @@ public class ListParserTest {
         String month = "month";
         cronField.setFieldName(month);
         cronField.setFieldValue("jan,feb,mar");
-        List<Integer> actual = ListParser.parse(month, cronField);
+        List<Integer> actual =  listParser.parse(cronField);
         List<Integer> expected = List.of(1, 2, 3);
         assertThat(actual, is(equalTo(expected)));
     }
@@ -102,7 +103,7 @@ public class ListParserTest {
         String month = "month";
         cronField.setFieldName(month);
         cronField.setFieldValue("13,0");
-        List<Integer> actual = ListParser.parse(month, cronField);
+        List<Integer> actual =  listParser.parse(cronField);
     }
 
     @Test(expected = IllegalCronExpressionException.class)
@@ -110,7 +111,7 @@ public class ListParserTest {
         String month = "month";
         cronField.setFieldName(month);
         cronField.setFieldValue("jan,blah,february");
-        List<Integer> actual = ListParser.parse(month, cronField);
+        List<Integer> actual =  listParser.parse(cronField);
     }
 
     @Test
@@ -118,8 +119,8 @@ public class ListParserTest {
         String day = "day of week";
         cronField.setFieldName(day);
         cronField.setFieldValue("0,3,6,7");
-        List<Integer> actual = ListParser.parse(day, cronField);
-        List<Integer> expected = List.of(0, 3, 6, 7);
+        List<Integer> actual =  listParser.parse(cronField);
+        List<Integer> expected = List.of(3, 6, 7);
         assertThat(actual, is(equalTo(expected)));
     }
 
@@ -128,7 +129,7 @@ public class ListParserTest {
         String day = "day of week";
         cronField.setFieldName(day);
         cronField.setFieldValue("mon,tue,sun");
-        List<Integer> actual = ListParser.parse(day, cronField);
+        List<Integer> actual =  listParser.parse(cronField);
         List<Integer> expected = List.of(1, 2, 7);
         assertThat(actual, is(equalTo(expected)));
     }
@@ -138,7 +139,7 @@ public class ListParserTest {
         String day = "day of week";
         cronField.setFieldName(day);
         cronField.setFieldValue("mon,2,thu,7");
-        List<Integer> actual = ListParser.parse(day, cronField);
+        List<Integer> actual =  listParser.parse(cronField);
         List<Integer> expected = List.of(1, 2, 4, 7);
         assertThat(actual, is(equalTo(expected)));
     }
@@ -148,7 +149,7 @@ public class ListParserTest {
         String month = "month";
         cronField.setFieldName(month);
         cronField.setFieldValue("8,0");
-        List<Integer> actual = ListParser.parse(month, cronField);
+        List<Integer> actual =  listParser.parse(cronField);
     }
 
     @Test(expected = IllegalCronExpressionException.class)
@@ -156,7 +157,7 @@ public class ListParserTest {
         String month = "month";
         cronField.setFieldName(month);
         cronField.setFieldValue("man,teu,wednesday");
-        List<Integer> actual = ListParser.parse(month, cronField);
+        List<Integer> actual =  listParser.parse(cronField);
     }
 
     @Test
@@ -166,13 +167,13 @@ public class ListParserTest {
         List<Integer> expectedMin = List.of(48);
         cronField.setFieldName(minute);
         cronField.setFieldValue("48,48,48");
-        List<Integer> actualMin = ListParser.parse(minute, cronField);
+        List<Integer> actualMin =  listParser.parse(cronField);
         assertThat(actualMin, is(equalTo(expectedMin)));
 
         List<Integer> expectedDay = List.of(5);
         cronField.setFieldName(day);
         cronField.setFieldValue("fri,5,fri");
-        List<Integer> actualDay = ListParser.parse(day, cronField);
+        List<Integer> actualDay =  listParser.parse(cronField);
         assertThat(actualDay, is(equalTo(expectedDay)));
     }
 }

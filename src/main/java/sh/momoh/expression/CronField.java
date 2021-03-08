@@ -60,6 +60,26 @@ public class CronField {
         this.fieldValue = fieldValue;
     }
 
+//    public List<Integer> parse() {
+//        ICronFieldParser parser = null;
+////        return switch (getCronType()) {
+////            case STAR -> StarParser.parse(this);
+////            case SINGLE -> SingleParser.parse(this);
+////            case RANGE -> RangeParser.parse(this);
+////            case INTERVAL -> IntervalParser.parse(this);
+////            case LIST -> ListParser.parse(this);
+////        };
+//        switch (cronFieldType) {
+//            case STAR:
+//                new StarParser();
+//            case SINGLE: parser = new SingleParser();
+//            case RANGE: parser = new RangeParser();
+//            case INTERVAL: parser = new IntervalParser();
+//            case LIST: parser = new ListParser();
+//        }
+//        return parser.parse(this);
+//    }
+
     @Override
     public String toString() {
         return "CronField{" +

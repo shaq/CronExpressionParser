@@ -3,14 +3,13 @@ package sh.momoh;
 import sh.momoh.expression.CronField;
 import sh.momoh.expression.CronFieldType;
 import sh.momoh.expression.IllegalCronExpressionException;
-import sh.momoh.parsers.*;
+import sh.momoh.parsers.ICronFieldParser;
+import sh.momoh.parsers.ParserFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static org.apache.commons.lang3.math.NumberUtils.isParsable;
 
 public class CronParser {
 
@@ -22,11 +21,13 @@ public class CronParser {
 
         // If year field is present, set length of cron to 6.
         int cronFieldNum;
-        if (isParsable(progArgs.get(5))) {
+        try {
+            CronFieldType.from(progArgs.get(5));
             cronFieldNum = 6;
-        } else {
+        } catch (IllegalCronExpressionException e) {
             cronFieldNum = 5;
         }
+
         List<String> cronExpression = progArgs.subList(0, cronFieldNum);
         List<String> cronCommand = progArgs.subList(cronFieldNum, progArgs.size());
         printOutputTable(cronExpression, cronCommand);
@@ -35,16 +36,9 @@ public class CronParser {
     private static List<CronOutput<Integer>> parseCronFields(List<CronField> cronFields) {
         List<CronOutput<Integer>> cronOutput = new ArrayList<>();
         for (CronField cronField : cronFields) {
-            List<Integer> times = new ArrayList<>();
+            ICronFieldParser parser = ParserFactory.getParser(cronField.getCronType());
             String fieldName = cronField.getFieldName();
-            CronFieldType type = cronField.getCronType();
-            switch (type) {
-                case STAR -> times = StarParser.parse(fieldName);
-                case SINGLE -> times = SingleParser.parse(fieldName, cronField);
-                case RANGE -> times = RangeParser.parse(fieldName, cronField);
-                case INTERVAL -> times = IntervalParser.parse(fieldName, cronField);
-                case LIST -> times = ListParser.parse(fieldName, cronField);
-            }
+            List<Integer> times = parser.parse(cronField);
             cronOutput.add(new CronOutput<>(fieldName, times));
         }
         return cronOutput;
