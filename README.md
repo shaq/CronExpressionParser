@@ -27,12 +27,13 @@ day of week    0 1 2 3 4 5 6 7
 command        /usr/bin/find
 ```
 ### Allowed values
-| Field          | Allowed Values                                           | Allowed special characters | 
-| -----------    | -----------                                              | -----------                |
-| Minutes        | `0-59`                                                   | `*` `,` `-` `/`            |
-| Hours          | `0-23`                                                   | `*` `,` `-` `/`            |
-| Day of month   | `1-31`                                                   | `*` `,` `-` `/`            |
-| Month          | `1-12` (or 3 character names `jan-feb`)                  | `*` `,` `-` `/`            |
-| Day of week    | `0-7` (`0` & `7` is Sun, or 3 character names `mon-sun`) | `*` `,` `-` `/`            |
+| Field          | Allowed Values                                           | Allowed special characters | Mandatory? |
+| -----------    | -----------                                              | -----------                | ---------- |
+| Minutes        | `0-59`                                                   | `*` `,` `-` `/`            | Yes        |
+| Hours          | `0-23`                                                   | `*` `,` `-` `/`            | Yes        |
+| Month          | `1-12` (or 3 character names `jan-feb`)                  | `*` `,` `-` `/`            | Yes        |
+| Day of month   | `1-31`                                                   | `*` `,` `-` `/`            | Yes        |
+| Day of week    | `0-7` (`0` & `7` is Sun, or 3 character names `mon-sun`) | `*` `,` `-` `/`            | Yes        |
+| Year           | `1000`-`2022`                                            | `*` `,` `-` `/`            | No         |
 
 The order of the fields must be preserved and all fields are manadatory.

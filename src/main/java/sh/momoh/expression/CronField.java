@@ -12,14 +12,15 @@ public class CronField {
     private CronFieldType cronFieldType;
     private String fieldValue;
 
-    public static final List<String> NAMES = List.of("minutes", "hours", "day of month", "month", "day of week");
+    public static final List<String> NAMES = List.of("minutes", "hours", "day of month", "month", "day of week", "year");
 
     public static final Map<String, TimeBounds> FIELD_TIME_BOUNDS = Map.ofEntries(
             new AbstractMap.SimpleEntry<>("minutes", new TimeBounds(0, 59)),
             new AbstractMap.SimpleEntry<>("hours", new TimeBounds(0, 23)),
             new AbstractMap.SimpleEntry<>("day of month", new TimeBounds(1, 31)),
             new AbstractMap.SimpleEntry<>("month", new TimeBounds(1, 12)),
-            new AbstractMap.SimpleEntry<>("day of week", new TimeBounds(0, 7)));
+            new AbstractMap.SimpleEntry<>("day of week", new TimeBounds(0, 7)),
+            new AbstractMap.SimpleEntry<>("year", new TimeBounds(1000, 2022)));
 
     public CronField(String fieldName, CronFieldType cronFieldType, String fieldValue) {
         this.cronFieldType = cronFieldType;

@@ -4,12 +4,15 @@ import sh.momoh.expression.CronField;
 import sh.momoh.expression.IllegalCronExpressionException;
 import sh.momoh.expression.timeunit.DayOfWeek;
 import sh.momoh.expression.timeunit.Month;
+import sh.momoh.expression.timeunit.TimeBounds;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.apache.commons.lang3.math.NumberUtils.isParsable;
+import static sh.momoh.expression.CronField.FIELD_TIME_BOUNDS;
 import static sh.momoh.expression.timeunit.DayOfWeek.getDayNumber;
 import static sh.momoh.expression.timeunit.Month.getMonthNumber;
 import static sh.momoh.expression.timeunit.TimeBounds.isWithinBounds;
@@ -52,6 +55,15 @@ public class RangeParser {
                         .range(start, end + 1)
                         .boxed()
                         .collect(Collectors.toList());
+            } else if (start > end) {
+                TimeBounds bounds = FIELD_TIME_BOUNDS.get(fieldName);
+                int lower = bounds.getLowerBound(), upper = bounds.getUpperBound();
+                // sunday can be 7 or 0, so set lower bound to 1 and keep sunday as 7
+                lower = "day of week".equals(fieldName) ? lower + 1 : lower;
+                List<Integer> reversed = new ArrayList<>();
+                for (int i = start; i < upper+1; i++) reversed.add(i);
+                for (int i = lower; i < end + 1; i++) reversed.add(i);
+                return reversed;
             }
         }
         throw new IllegalCronExpressionException(String.format("Incorrect range %s-%s for field: <%s>", start, end, fieldName));

@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public enum CronFieldType {
 
     STAR("^\\*$"),
-    SINGLE("^\\w{1,3}$"),
+    SINGLE("^\\w{1,4}$"),
     RANGE("^\\w{1,3}-\\w{1,3}$"),
     INTERVAL("^(\\w{1,3}-\\w{1,3}|\\*)/(2|3|4|5|6|12|15|20|30)$"),
     LIST("^\\w{1,3}(,\\w{1,3})+$");

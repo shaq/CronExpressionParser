@@ -33,7 +33,6 @@ public enum DayOfWeek {
     }
 
     public static Integer getDayNumber(DayOfWeek day, String value) {
-        if (day == sun && "0".equals(value)) return 0;
         return day.ordinal() + 1;
     }
 }
